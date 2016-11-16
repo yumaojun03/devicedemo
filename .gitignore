@@ -45,3 +45,5 @@ keys/*
 jumpserver.conf
 nohup.out
 tmp/*
+AUTHORS
+ChangeLog
