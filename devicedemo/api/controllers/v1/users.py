@@ -1,9 +1,7 @@
 # ~*~ coding: utf-8 ~*~
-from __future__ import print_function, unicode_literals
-
 import pecan
 
-from pecan import rest
+from pecan import rest, request
 from wsme import types as wtypes
 
 from devicedemo.api import expose
@@ -54,20 +52,16 @@ class UsersController(rest.RestController):
 
     @expose.expose(Users)
     def get(self):
-        user_info_list = [{
-            'id': 1,
-            'user_id': 'test_id',
-            'name': 'Alice',
-            'email': '719118794@qq.com'
-            },
-            {
-            'id': 2,
-            'user_id': 'test_id2',
-            'name': 'Alice2',
-            'email': '719118791@qq.com'
-            }
-        ]
-        users_list = [User(**user_info) for user_info in user_info_list]
+        db_conn = request.db_conn    # 调用DBHook中创建的Connection实例
+        users = db_conn.list_users() # 调用所需要的DB API
+        users_list = []
+        for user in users:
+            u = User()
+            u.id = user.id
+            u.user_id = user.user_id
+            u.name = user.name
+            u.email = user.email
+            users_list.append(u)
         return Users(users=users_list)
 
     @expose.expose(None, body=User, status_code=201)

@@ -5,3 +5,6 @@
 pbr<2.0,>=0.11
 pecan==1.2.1
 WSME==0.8.0
+SQLAlchemy<1.1.0,>=0.9.9
+PyMySQL==0.7.9
+alembic>=0.8.0
