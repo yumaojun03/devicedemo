@@ -1,6 +1,7 @@
 import traceback
 
-from sqlalchemy import orm, exc
+from sqlalchemy import orm
+from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy import create_engine
 from devicedemo.db import models as db_models
 
@@ -43,26 +44,27 @@ class Connection(object):
     def __init__(self):
         pass
 
-    def get_user(self, user_id):
-        query = get_session().query(db_models.User).filter_by(user_id=user_id)
+    def get_device(self, device_uuid):
+        query = get_session().query(db_models.Device).filter_by(uuid=device_uuid)
         try:
-            user = query.one()
-        except Exception as e:
+            device = query.one()
+        except NoResultFound as e:
             # No QA
+            device = None
             traceback.print_exc()
             print(e)
 
-        return user
+        return device
 
-    def list_users(self):
+    def list_devices(self):
         session = get_session()
-        query = session.query(db_models.User)
+        query = session.query(db_models.Device)
         users = query.all()
 
         return users
 
-    def update_user(self, user):
+    def update_device(self, user):
         pass
 
-    def delete_user(self, user):
+    def delete_device(self, user):
         pass

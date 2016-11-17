@@ -6,17 +6,18 @@ from sqlalchemy import Index
 Base = declarative.declarative_base()
 
 
-class User(Base):
-    """
-    User Table
-    """
-    __tablename__ = 'user'
+class Device(Base):
+    """用于记录IOT设备相关属性"""
+    __tablename__ = 'device'
     __table_args__ = (
-        Index('ix_user_user_id', 'user_id'),
+        Index('uuid'),
     )
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(String(255), nullable=False)
+    uuid = Column(String(255), nullable=False)
     name = Column(String(64), nullable=False, unique=True)
-    email = Column(String(255))
+    type = Column(String(255))
+    vendor = Column(String(255))
+    version = Column(String(64))
+
 
