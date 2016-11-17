@@ -5,12 +5,12 @@ from wsme import types as wtypes
 
 
 from devicedemo.api import expose
-from devicedemo.api.controllers.v1 import users as v1_users
+from devicedemo.api.controllers.v1 import devices as v1_device
 
 
 class V1Controller(rest.RestController):
-    users = v1_users.UsersController()
+    devices = v1_device.DevicesController()
 
     @expose.expose(wtypes.text)
     def get(self):
-        return "devicedemo v1controller"
+        return {"data": "devicedemo v1controller", "error": None}

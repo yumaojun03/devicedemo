@@ -11,4 +11,4 @@ class RootController(rest.RestController):
 
     @expose.expose(wtypes.text)
     def get(self):
-        return {"data": "devicedemo"}
+        return {"data": "devicedemo", "error": None}

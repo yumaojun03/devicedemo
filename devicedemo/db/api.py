@@ -1,7 +1,7 @@
 import traceback
 
 from sqlalchemy import orm
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm import exc as db_exc
 from sqlalchemy import create_engine
 from devicedemo.db import models as db_models
 
@@ -48,7 +48,7 @@ class Connection(object):
         query = get_session().query(db_models.Device).filter_by(uuid=device_uuid)
         try:
             device = query.one()
-        except NoResultFound as e:
+        except db_exc.NoResultFound as e:
             # No QA
             device = None
             traceback.print_exc()
@@ -60,11 +60,49 @@ class Connection(object):
         session = get_session()
         query = session.query(db_models.Device)
         users = query.all()
-
         return users
 
-    def update_device(self, user):
-        pass
+    def create_device(self, device):
+        session = get_session()
+        device_obj = db_models.Device(**device.to_dict())
+        try:
+            session.add(device_obj)
+            session.commit()
+        except Exception as e:
+            # noqa
+            traceback.print_exc()
+            print(e)
 
-    def delete_device(self, user):
-        pass
+    def update_device(self, device):
+        session = get_session()
+        query = session.query(db_models.Device).filter_by(uuid=device.uuid)
+        try:
+            d = query.one()
+            d.name = device.name
+            d.type = device.type
+            d.vendor = device.vendor
+            d.version = device.version
+            session.commit()
+        except db_exc.NoResultFound as e:
+            # No QA
+            traceback.print_exc()
+            print(e)
+            d = None
+        return d
+
+    def delete_device(self, uuid):
+        session = get_session()
+        query = session.query(db_models.Device).filter_by(uuid=uuid)
+        ret = {"data": None, "error": None}
+        try:
+            device = query.one()
+            session.delete(device)
+            session.commit()
+            ret['data'] = "delete device %s success" % uuid
+        except db_exc.NoResultFound as e:
+            # No QA
+            traceback.print_exc()
+            print(e)
+            ret['error'] = e
+        return ret
+

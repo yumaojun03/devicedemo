@@ -8,16 +8,29 @@ from devicedemo.api import expose
 
 
 class Device(wtypes.Base):
-    id = int
     uuid = wtypes.text
     name = wtypes.text
     type = wtypes.text
     vendor = wtypes.text
     version = wtypes.text
 
+    def to_dict(self):
+        return {
+            "uuid": self.uuid,
+            "name": self.name,
+            "type": self.type,
+            "vendor": self.vendor,
+            "version": self.version,
+        }
+
 
 class Devices(wtypes.Base):
     devices = [Device]
+
+
+class RetData(wtypes.Base):
+    data = wtypes.text
+    error = wtypes.text
 
 
 class DeviceController(rest.RestController):
@@ -27,23 +40,23 @@ class DeviceController(rest.RestController):
 
     @expose.expose(Device)
     def get(self):
-        user_info = {
-            'user_id': self.user_id,
-            'name': 'Alice',
-        }
-        return Device(**user_info)
+        db_conn = request.db_conn
+        device = db_conn.get_device(self.uuid)
+        return device
 
     @expose.expose(Device, body=Device)
-    def put(self, user):
-        user_info = {
-            'user_id': self.user_id,
-            'name': user.name,
-        }
-        return Device(**user_info)
+    def put(self, device):
+        db_conn = request.db_conn
+        new_device_obj = db_conn.update_device(device)
+        d = Device(**new_device_obj.as_dict())
 
-    @expose.expose()
+        return d
+
+    @expose.expose(RetData)
     def delete(self):
-        print('Delete user_id: %s' % self.uuid)
+        db_conn = request.db_conn
+        ret = db_conn.delete_device(self.uuid)
+        return RetData(**ret)
 
 
 class DevicesController(rest.RestController):
@@ -56,18 +69,23 @@ class DevicesController(rest.RestController):
     def get(self):
         # 调用DBHook中创建的Connection实例, 调用所需要的DB API
         db_conn = request.db_conn
-        users = db_conn.list_devices()
+        devices = db_conn.list_devices()
 
         devices_list = []
-        for user in users:
-            u = Device()
-            u.id = user.id
-            u.user_id = user.user_id
-            u.name = user.name
-            u.email = user.email
-            devices_list.append(u)
-        return Devices(users=devices_list)
+        for device in devices:
+            d = Device()
+            d.uuid = device.uuid
+            d.name = device.name
+            d.type = device.type
+            d.vendor = device.vendor
+            d.version = device.version
 
-    @expose.expose(None, body=Device, status_code=201)
-    def post(self, user):
-        print(user)
+            devices_list.append(d)
+        return Devices(devices=devices_list)
+
+    @expose.expose(RetData, body=Device, status_code=201)
+    def post(self, device):
+        db_conn = request.db_conn
+        db_conn.create_device(device)
+        ret = RetData(data="create success", error=None)
+        return ret

@@ -20,4 +20,11 @@ class Device(Base):
     vendor = Column(String(255))
     version = Column(String(64))
 
-
+    def as_dict(self):
+        return {
+            "uuid": self.uuid,
+            "name": self.name,
+            "type": self.type,
+            "vendor": self.vendor,
+            "version": self.version,
+        }
