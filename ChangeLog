@@ -1,4 +1,12 @@
 CHANGES
 =======
 
+* 完善基于Device模型的API的增删查改
+* 添加一些目录架构,添加Device模型
+* 忽略sqlite3数据库文件
+* 初始化了数据库层，并且添加了数据库版本管理
+* 生成一个关于user资源的相关测试demo
+* 忽略virtualenv的环境目录
+* 完成REST API服务的框架搭建
+* pack test
 * inital project
