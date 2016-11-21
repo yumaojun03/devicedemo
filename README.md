@@ -58,9 +58,13 @@
 1. 项目打包相关文件
 
     AUTHORS：　 描述项目参与者大
+    
     ChangeLog：  描述版本的ChangLog
+    
     requirement.txt： 实现自动依赖安装
+    
     setup.cfg：　setuptools打包时提供包的元数据
+    
     setup.py:    setup命令运行接口
 
 2. 项目配置文件目录
@@ -70,6 +74,7 @@
 3. 项目说明文档目录
 
     doc/install:  项目安装说明文档
+    
     doc/source:   项目产品说明文档
 
 4. 项目源码目录
@@ -108,16 +113,20 @@
 
 ### 使用组件参考文档
 1. Pecan
+
     中文文档较少, 这里是[官方文档](http://pecan.readthedocs.io/en/latest/)
     这里有一份基于Ceilometer的介绍,涉及对Pecan介绍[Ceilometer API调用流程分析](http://blog.csdn.net/s1234567_89/article/details/51890459)
 
 2. WSME
+
     文档很少, 这里是[官方文档](https://pythonhosted.org/WSME/)
 
 3. sqlarchemy
+
     文档很多
 
 4. Alembic
+
      [基本使用1](http://blog.csdn.net/oranyujian/article/details/48464365)
      [基本使用2](http://www.codeweblog.com/%E4%BD%BF%E7%94%A8alembic/)
      [官网](http://www.alembic.io/)
