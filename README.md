@@ -105,6 +105,24 @@
 	测试用例的运行和管理: testrepository, subunit, coverage
 	测试用例的编写: unittest, mock, testtools, fixtures, testscena
 
+
+### 使用组件参考文档
+1. Pecan
+    中文文档较少, 这里是[官方文档](http://pecan.readthedocs.io/en/latest/)
+    这里有一份基于Ceilometer的介绍,涉及对Pecan介绍[Ceilometer API调用流程分析](http://blog.csdn.net/s1234567_89/article/details/51890459)
+
+2. WSME
+    文档很少, 这里是[官方文档](https://pythonhosted.org/WSME/)
+
+3. sqlarchemy
+    文档很多
+
+4. Alembic
+     [基本使用1](http://blog.csdn.net/oranyujian/article/details/48464365)
+     [基本使用2](http://www.codeweblog.com/%E4%BD%BF%E7%94%A8alembic/)
+     [官网](http://www.alembic.io/)
+    
+
 ### Demo测试样例
 
 1. 查看device列表
