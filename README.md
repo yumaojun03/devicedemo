@@ -115,6 +115,7 @@
 1. Pecan
 
     中文文档较少, 这里是[官方文档](http://pecan.readthedocs.io/en/latest/)
+    
     这里有一份基于Ceilometer的介绍,涉及对Pecan介绍[Ceilometer API调用流程分析](http://blog.csdn.net/s1234567_89/article/details/51890459)
 
 2. WSME
@@ -136,7 +137,7 @@
 
 ### Demo测试样例
 
-1. 查看device列表
+ - 查看device列表
 
 ```
  yumaojun@yumaojun-virtual-machine  ~  curl localhost:8080/v1/devices | python -m json.tool 
@@ -174,7 +175,7 @@
 }
 ```
 
-2. 查看device详情
+- 查看device详情
 
 ```
  yumaojun@yumaojun-virtual-machine  ~  curl localhost:8080/v1/devices/test | python -m json.tool
@@ -188,7 +189,7 @@
 
 ```
 
-3. 创建device
+- 创建device
 
 ```
  yumaojun@yumaojun-virtual-machine  ~  curl -X POST http://localhost:8080/v1/devices -H "Content-Type: application/json" -d '{"uuid": "test_new5", "name": "test_new5", "type":"test_new2", "vendor": "test", "version": "111"}' | python -m json.tool
@@ -198,7 +199,7 @@
 }
 ```
 
-4. 删除device
+- 删除device
 
 ```
  yumaojun@yumaojun-virtual-machine  ~  curl -X DELETE http://localhost:8080/v1/devices/test  | python -m json.tool
