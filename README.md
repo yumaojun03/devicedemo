@@ -56,6 +56,7 @@
 ```
 
 1. 项目打包相关文件
+
     AUTHORS：　 描述项目参与者大
     ChangeLog：  描述版本的ChangLog
     requirement.txt： 实现自动依赖安装
@@ -63,13 +64,16 @@
     setup.py:    setup命令运行接口
 
 2. 项目配置文件目录
+
     etc/devicedemo：　devicedemo项目需要的配置文件
 
 3. 项目说明文档目录
+
     doc/install:  项目安装说明文档
     doc/source:   项目产品说明文档
 
 4. 项目源码目录
+
     + api
     
     > 提高API服务的目录, 整体框架采用OpenStack新项目, 比如Ceilometer和magnum采用的框架
@@ -95,6 +99,7 @@
     > service需要有一个命令行的管理接口, 这个是实现的用于管理API Service的一个命令行工具
     
 5. 单元测试与覆盖率测试(比较复杂Demo未实现)
+
     在OpenStack的项目中, 这部分很全面复杂, 涉及到如下内容：
 	测试环境管理: tox
 	测试用例的运行和管理: testrepository, subunit, coverage
