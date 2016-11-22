@@ -106,8 +106,11 @@
 5. 单元测试与覆盖率测试(比较复杂Demo未实现)
 
     在OpenStack的项目中, 这部分很全面复杂, 涉及到如下内容：
+    
 	测试环境管理: tox
+	
 	测试用例的运行和管理: testrepository, subunit, coverage
+	
 	测试用例的编写: unittest, mock, testtools, fixtures, testscena
 
 
