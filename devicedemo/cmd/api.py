@@ -1,17 +1,80 @@
 # ~*~ coding: utf-8 ~*~
-from wsgiref import simple_server
+# Copyright 2013 - Red Hat, Inc.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
 
-from devicedemo.api import app
+"""Starter script for the DeviceDemo API service."""
+
+import os
+import sys
+
+from oslo_log import log as logging
+from oslo_reports import guru_meditation_report as gmr
+from werkzeug import serving
+
+from devicedemo.api import app as api_app
+from devicedemo.common import service
+import devicedemo.conf
+from devicedemo.common.i18n import _
+from devicedemo.common.i18n import _LI
+from devicedemo.objects import base
+from devicedemo import version
+
+
+CONF = devicedemo.conf.CONF
+LOG = logging.getLogger(__name__)
+
+
+def _get_ssl_configs(use_ssl):
+    if use_ssl:
+        cert_file = CONF.api.ssl_cert_file
+        key_file = CONF.api.ssl_key_file
+
+        if cert_file and not os.path.exists(cert_file):
+            raise RuntimeError(
+                _("Unable to find cert_file : %s") % cert_file)
+
+        if key_file and not os.path.exists(key_file):
+            raise RuntimeError(
+                _("Unable to find key_file : %s") % key_file)
+
+        return cert_file, key_file
+    else:
+        return None
 
 
 def main():
-    host = '0.0.0.0'
-    port = 8080
+    service.prepare_service(sys.argv)
 
-    application = app.setup_app()
-    srv = simple_server.make_server(host, port, application)
-    srv.serve_forever()
+    gmr.TextGuruMeditation.setup_autorun(version)
 
+    # Enable object backporting via the conductor
+    base.DevicedemoObject.indirection_api = base.DevicedemoObjectIndirectionAPI()
 
-if __name__ == "__main__":
-    main()
+    app = api_app.load_app()
+
+    # SSL configuration
+    use_ssl = CONF.api.enabled_ssl
+
+    # Create the WSGI server and start it
+    host, port = CONF.api.host, CONF.api.port
+
+    LOG.info(_LI('Starting server in PID %s'), os.getpid())
+    LOG.debug("Configuration:")
+    CONF.log_opt_values(LOG, logging.DEBUG)
+
+    LOG.info(_LI('Serving on %(proto)s://%(host)s:%(port)s'),
+             dict(proto="https" if use_ssl else "http", host=host, port=port))
+
+    serving.run_simple(host, port, app,
+                       ssl_context=_get_ssl_configs(use_ssl))

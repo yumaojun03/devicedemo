@@ -3,8 +3,18 @@
 # process, which may cause wedges in the gate later.
 
 pbr<2.0,>=0.11
+Paste==2.0.3
+PasteDeploy==1.5.2
 pecan==1.2.1
 WSME==0.8.0
 SQLAlchemy<1.1.0,>=0.9.9
 PyMySQL==0.7.9
 alembic>=0.8.0
+
+oslo.middleware==3.20.0
+oslo.log==3.17.0
+oslo.concurrency==3.15.0
+oslo.messaging==5.12.0
+oslo.reports==1.15.0
+oslo.versionedobjects==1.18.0
+keystonemiddleware==4.10.0
