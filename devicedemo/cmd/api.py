@@ -27,7 +27,6 @@ from devicedemo.common import service
 import devicedemo.conf
 from devicedemo.common.i18n import _
 from devicedemo.common.i18n import _LI
-from devicedemo.objects import base
 from devicedemo import version
 
 
@@ -58,9 +57,6 @@ def main():
 
     gmr.TextGuruMeditation.setup_autorun(version)
 
-    # Enable object backporting via the conductor
-    base.DevicedemoObject.indirection_api = base.DevicedemoObjectIndirectionAPI()
-
     app = api_app.load_app()
 
     # SSL configuration
@@ -78,3 +74,7 @@ def main():
 
     serving.run_simple(host, port, app,
                        ssl_context=_get_ssl_configs(use_ssl))
+
+
+if __name__ == "__main__":
+    main()

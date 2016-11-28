@@ -13,15 +13,15 @@
 from oslo_config import cfg
 
 api_group = cfg.OptGroup(name='api',
-                         title='Options for the magnum-api service')
+                         title='Options for the devicedemo-api service')
 
 api_service_opts = [
     cfg.PortOpt('port',
                 default=9511,
-                help='The port for the Magnum API server.'),
+                help='The port for the Devicedemo API server.'),
     cfg.IPOpt('host',
-              default='127.0.0.1',
-              help='The listen IP for the Magnum API server.'),
+              default='0.0.0.0',
+              help='The listen IP for the Devicedemo API server.'),
     cfg.IntOpt('max_limit',
                default=1000,
                help='The maximum number of items returned in a single '
@@ -39,7 +39,7 @@ api_service_opts = [
                     "effect. "),
     cfg.BoolOpt('enabled_ssl',
                 default=False,
-                help='Enable SSL Magnum API service')
+                help='Enable SSL Devicedemo API service')
 ]
 
 
