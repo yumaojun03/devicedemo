@@ -112,6 +112,12 @@
 	测试用例的运行和管理: testrepository, subunit, coverage
 	
 	测试用例的编写: unittest, mock, testtools, fixtures, testscena
+	
+6. 使用virtualenv管理项目的Python环境
+    
+    为了使得项目保持一个独立干净的Python环境，项目请使用Virtualenv管理环境
+    
+    比如使用如下命令在项目根目录下为这个项目初始化一个.venv的Python环境`virtualenv --no-site-packages .venv`
 
 
 ### 使用组件参考文档
