@@ -67,8 +67,7 @@ apt install keystone
 # 配置KeyStone, 配置文件位置：/etc/keystone/keystone.conf, 修改database和token段
 [database]
 ...
-connection = mysql+pymysql://keystone:KEYSTONE_DBPASS@controller/keystone
-
+connection = mysql+pymysql://keystone:KEYSTONE_DBPASS@127.0.0.1/keystone?charset=utf8
 [token]
 ...
 provider = fernet
