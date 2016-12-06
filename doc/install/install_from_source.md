@@ -276,7 +276,7 @@ flavor = keystone
 - 像Keystone申请token, 用于访问devicedemo服务
 
 ```
-RAW_TOKEN=`curl -s -X POST http://127.0.0.1:5000/v2.0/tokens -H "Content-Type: application/json"  -d '{"auth": {"tenantName": "'"admin"'", "passwordCredentials":{"username": "'"admin"'", "password": "'"password"'"}}}'`
+RAW_TOKEN=`curl -s -X POST http://127.0.0.1:5000/v2.0/tokens -H "Content-Type: application/json"  -d '{"auth": {"tenantName": "'"admin"'", "passwordCredentials":{"username": "'"admin"'", "password": "'"ADMIN_PASS"'"}}}'`
 TOKEN=`echo $RAW_TOKEN | python -c "import sys; import json; tok = json.loads(sys.stdin.read()); print tok['access']['token']['id'];"`
 root@yumaojun-virtual-machine:~# echo $TOKEN
 5899f591e99b49e0b53710ba38576892

@@ -12,6 +12,7 @@ PyMySQL==0.7.9
 alembic>=0.8.0
 
 Werkzeug>=0.11.11
+python-memcached>=1.58
 
 oslo.middleware==3.20.0
 oslo.log==3.17.0
