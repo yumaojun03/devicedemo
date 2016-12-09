@@ -150,4 +150,4 @@
 
 ### 基于Docker的安装
 
-  基于Docker容器来部署请查看
+  基于Docker容器来部署请查看[Docker安装](doc/install/install_from_huge_docker.md)
