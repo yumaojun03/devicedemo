@@ -54,6 +54,126 @@ HEAD请求是基于一个无响应体的GET请求，并且也可以被缓存的�
 + HEAD ： 获取一个资源的元数据，如数据的哈希值或最后的更新时间。
 + OPTIONS：获取客户端能对资源做什么操作的信息。
 
+
+## 域名
+
+  域名是用于访问你的API服务的第一步，因此如何在域名上表现自己提供的API 服务喃，以下有2种方法
+
+  + 应该尽量将API部署在专用域名之下。
+  
+  + 如果确定API很简单，不会有进一步扩展，可以考虑放在主域名下。
+  
+  ```
+https://api.example.com   # 专业域名
+https://example.org/api/  # URI中明确说明
+```
+
 ## 版本化
+
+  API是服务器与客户端之间的一个公共契约。如果你对服务器上的API做了一个更改，并且这些更改无法向后兼容，
+  那么你就打破了这个契约，客户端又会要求你重新支持它。为了避免这样的事情，你既要确保应用程序逐步的演变，
+  又要让客户端满意。那么你必须在引入新版本API的同时保持旧版本API仍然可用。
+
+  随着时间的推移，你可能声明不再支持某些旧版本的API。申明不支持一个特性并不意味着关闭或者破坏它。
+  而是告诉客户端旧版本的API将在某个特定的时间被删除，并且建议他们使用新版本的API。
+  
+  如果你只是简单的增加一个新的特性到API上，如资源上的一个新属性或者增加一个新的端点，你不需要增加API的版本。
+  因为这些并不会造成向后兼容性的问题，你只需要修改文档即可。
+  
+  这里实现方式有2种：
+  
+  + 应该将API的版本号放入URL
+  
+  + 将版本号放在HTTP头信息中，但不如放入URL方便和直观, Github采用的就是这种做法
+  
+  ```
+  https://api.example.com/v1/                       # 在URL中说明
+  
+  curl -i https://api.github.com/users/octocat/orgs # HTTP头中表示API版本
+
+    HTTP/1.1 200 OK
+    Server: nginx
+    Date: Fri, 12 Oct 2012 23:33:14 GMT
+    Content-Type: application/json; charset=utf-8
+    Connection: keep-alive
+    Status: 200 OK
+    ETag: "a00049ba79152d03380c34652f2cb612"
+    X-GitHub-Media-Type: github.v3
+    
+    X-RateLimit-Limit: 5000
+    X-RateLimit-Remaining: 4987
+    X-RateLimit-Reset: 1350085394
+    
+    Content-Length: 5
+    Cache-Control: max-age=0, private, must-revalidate
+    X-Content-Type-Options: nosniff
+  ```
+  
+## API ROOT URI
+
+  API的根地址很重要。可以通过这个列表快速了解你提供的服务，因此，让你的API根入口点保持尽可能的简单。以github的列
+
+```
+maojun@maojun-mbp# curl https://api.github.com
+{
+  "current_user_url": "https://api.github.com/user",
+  "current_user_authorizations_html_url": "https://github.com/settings/connections/applications{/client_id}",
+  "authorizations_url": "https://api.github.com/authorizations",
+  "code_search_url": "https://api.github.com/search/code?q={query}{&page,per_page,sort,order}",
+  "emails_url": "https://api.github.com/user/emails",
+  "emojis_url": "https://api.github.com/emojis",
+  "events_url": "https://api.github.com/events",
+  "feeds_url": "https://api.github.com/feeds",
+  "followers_url": "https://api.github.com/user/followers",
+  "following_url": "https://api.github.com/user/following{/target}",
+  "gists_url": "https://api.github.com/gists{/gist_id}",
+  "hub_url": "https://api.github.com/hub",
+  "issue_search_url": "https://api.github.com/search/issues?q={query}{&page,per_page,sort,order}",
+  "issues_url": "https://api.github.com/issues",
+  "keys_url": "https://api.github.com/user/keys",
+  "notifications_url": "https://api.github.com/notifications",
+  "organization_repositories_url": "https://api.github.com/orgs/{org}/repos{?type,page,per_page,sort}",
+  "organization_url": "https://api.github.com/orgs/{org}",
+  "public_gists_url": "https://api.github.com/gists/public",
+  "rate_limit_url": "https://api.github.com/rate_limit",
+  "repository_url": "https://api.github.com/repos/{owner}/{repo}",
+  "repository_search_url": "https://api.github.com/search/repositories?q={query}{&page,per_page,sort,order}",
+  "current_user_repositories_url": "https://api.github.com/user/repos{?type,page,per_page,sort}",
+  "starred_url": "https://api.github.com/user/starred{/owner}{/repo}",
+  "starred_gists_url": "https://api.github.com/gists/starred",
+  "team_url": "https://api.github.com/teams",
+  "user_url": "https://api.github.com/users/{user}",
+  "user_organizations_url": "https://api.github.com/user/orgs",
+  "user_repositories_url": "https://api.github.com/users/{user}/repos{?type,page,per_page,sort}",
+  "user_search_url": "https://api.github.com/search/users?q={query}{&page,per_page,sort,order}"
+}
+```
+  
+## Endpoints
+
+  一个端点就是指向特定资源或资源集合的URL。在RESTful架构中，每个网址代表一种资源（resource），
+  所以网址中不能有动词，只能有名词，而且所用的名词往往与数据库的表格名对应。
+  一般来说，数据库中的表都是同种记录的"集合"（collection），所以API中的名词也应该使用复数。
+  
+```
+https://api.example.com/v1/zoos
+https://api.example.com/v1/animals
+https://api.example.com/v1/animal_types
+https://api.example.com/v1/employees
+
+GET /zoos: List all Zoos (ID and Name, not too much detail)
+POST /zoos: Create a new Zoo
+GET /zoos/ZID: Retrieve an entire Zoo object
+PUT /zoos/ZID: Update a Zoo (entire object)
+PATCH /zoos/ZID: Update a Zoo (partial object)
+DELETE /zoos/ZID: Delete a Zoo
+GET /zoos/ZID/animals: Retrieve a listing of Animals (ID and Name).
+GET /animals: List all Animals (ID and Name).
+POST /animals: Create a new Animal
+GET /animals/AID: Retrieve an Animal object
+PUT /animals/AID: Update an Animal (entire object)
+PATCH /animals/AID: Update an Animal (partial object)
+```
+
 
 
