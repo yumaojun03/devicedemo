@@ -5,9 +5,8 @@
 
 - 获取keystone的获取镜像
 
-    在内部获取
-    
     可能的问题
+    
     > 可能会出现无法push/pull镜像到私有仓库的问题。这是因为我们启动的registry服务不是安全可信赖的。这是我们需要修改docker的配置文件/etc/default/docker，添加下面的内容，
     DOCKER_OPTS="--insecure-registry xxx.xxx.xxx.xxx:5000"
     然后重启docker后台进程，
@@ -17,10 +16,20 @@
 
 - 创建合适的Keystone服务
 
-    Keystone的build的过程中会注册devicedemo到keystone服务里面，
-    因此这里你需要手动修改 devicedemo的服务地址，与你本地的服务对应。
+  + 修改Dockerfile（devicedemo/Deploy/huge_docker/keystone/Dockerfile)中FROM部分为你 当前镜像
     
-    进入到build keystone 的目录： devicedemo/Deploy/huge_docker/keystone
+  > 比如你获取的镜像为： 192.168.1.105:5000/keystone:newton, Dockefile中FROM哪行就需要修改成
+  FROM 192.168.1.105:5000/keystone:newton
+  
+  + 修改devicedemo服务地址
+    
+  > Keystone的build的过程中会注册devicedemo到keystone服务里面，
+   因此这里你需要手动修改 devicedemo的服务地址，与你本地的服务对应,
+   比如 替换 Dockefile中 192.168.21.139:9511 为你devicedemo真正的地址。
+    
+  + build Keystone服务镜像
+  
+  > 进入到build keystone 的目录： devicedemo/Deploy/huge_docker/keystone
     
 ```
 maojun@maojun-mbp# pwd
