@@ -151,9 +151,13 @@ maojun@maojun-mbp# curl https://api.github.com
   
 ## Endpoints
 
-  一个端点就是指向特定资源或资源集合的URL。在RESTful架构中，每个网址代表一种资源（resource），
-  所以网址中不能有动词，只能有名词，而且所用的名词往往与数据库的表格名对应。
-  一般来说，数据库中的表都是同种记录的"集合"（collection），所以API中的名词也应该使用复数。
+  一个端点就是指向特定资源或资源集合的URL。针对每一个端点来说，你可能想列出所有可行的HTTP动词和端点的组合。
+  在RESTful架构中，每个网址代表一种资源（resource），所以网址中不能有动词，只能有名词，
+  而且所用的名词往往与数据库的表格名对应。一般来说，数据库中的表都是同种记录的
+  "集合"（collection），所以API中的名词也应该使用复数。
+  
+  请注意如何展示数据之间的关系，特别是雇员与动物园之间的多对多关系。通过添加一个额外的URL段就可以实现更多的交互能力。
+  当然没有一个HTTP动词能表示正在解雇一个人，但是你可以使用DELETE一个动物园里的雇员来达到相同的效果。
   
 ```
 https://api.example.com/v1/zoos
@@ -175,5 +179,146 @@ PUT /animals/AID: Update an Animal (entire object)
 PATCH /animals/AID: Update an Animal (partial object)
 ```
 
+## 过滤和排序
 
+  使用过滤和排序有多种原因，因此API应该提供参数，过滤和排序返回结果，降低客户端的复杂度。
+  
+  + 如果记录数量很多，服务器不可能都将它们返回给用户。
+  
+  + 从客户端的角度来说，最小化网络传输，并让客户端尽可能快的得到查询结果。
+  
+  + 从服务器角度来说，响应请求越小负载就越小。
+  
+```
+?limit=10: 减少返回给客户端的结果数量（用于分页）
+?offset=10: 发送一堆信息给客户端（用于分页）
+?animal_type_id=1: 使用条件匹配来过滤记录
+?sortby=name&order=asc:  对结果按特定属性进行排序
+```
+  
+## 状态码
 
+  服务器向用户返回的状态码和提示信息，因为它们是HTTP的标准，所以通用性上有保证，
+  状态码的完整定义请看[HTTP1.1/rfc Status Code define](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html)
+
+```
+状态码范围说明：
+1xx：保留给底层HTTP功能使用的，并且估计在你的职业生涯里面也用不着手动发送这样一个状态码出来。
+2xx：保留给成功消息使用的，你尽可能的确保服务器总发送这些状态码给用户。
+3xx：保留给重定向用的。大多数的API不会太常使用这类状态码，但是在新的超媒体样式的API中会使用更多一些。
+4xx：保留给客户端错误用的。例如，客户端提供了一些错误的数据或请求了不存在的内容。这些请求应该是幂等的，不会改变任何服务器的状态。
+5xx：保留给服务器端错误用的。这些错误常常是从底层的函数抛出来的，并且开发人员也通常没法处理。发送这类状态码的目的是确保客户端能得到一些响应。收到5xx响应后，客户端没办法知道服务器端的状态，所以这类状态码是要尽可能的避免。
+
+常见的一些状态码：
+200 OK - [GET]：服务器成功返回用户请求的数据，该操作是幂等的（Idempotent）。
+201 CREATED - [POST/PUT/PATCH]：用户新建或修改数据成功。
+202 Accepted - [*]：表示一个请求已经进入后台排队（异步任务）
+204 NO CONTENT - [DELETE]：用户删除数据成功。
+400 INVALID REQUEST - [POST/PUT/PATCH]：用户发出的请求有错误，服务器没有进行新建或修改数据的操作，该操作是幂等的。
+401 Unauthorized - [*]：表示用户没有权限（令牌、用户名、密码错误）。
+403 Forbidden - [*] 表示用户得到授权（与401错误相对），但是访问是被禁止的。
+404 NOT FOUND - [*]：用户发出的请求针对的是不存在的记录，服务器没有进行操作，该操作是幂等的。
+406 Not Acceptable - [GET]：用户请求的格式不可得（比如用户请求JSON格式，但是只有XML格式）。
+410 Gone -[GET]：用户请求的资源被永久删除，且不会再得到的。
+422 Unprocesable entity - [POST/PUT/PATCH] 当创建一个对象时，发生一个验证错误。
+500 INTERNAL SERVER ERROR - [*]：服务器发生错误，用户将无法判断发出的请求是否成功。
+```
+
+## 错误处理
+
+如果状态码是4xx，就应该向用户返回出错信息。一般来说，返回的信息中将error作为键名，出错信息作为键值即可。
+
+```js
+{
+    error: "Invalid API key"
+}
+```
+
+## 返回结果
+
+  针对不同操作，服务器向用户返回的结果应该符合以下规范。
+  
+```
+GET /collection: 返回一系列资源对象
+GET /collection/resource: 返回单独的资源对象
+POST /collection: 返回新创建的资源对象
+PUT /collection/resource: 返回完整的资源对象
+PATCH /collection/resource: 返回完整的资源对象
+DELETE /collection/resource: 返回一个空文档
+```
+
+## Hypermedia API
+
+  RESTful API最好做到Hypermedia，即返回结果中提供链接，连向其他API方法，使得用户不查文档，也知道下一步应该做什么
+  Hypermedia API的设计被称为[HATEOAS](https://en.wikipedia.org/wiki/HATEOAS)
+  
+  + link: 用户读取这个属性就知道下一步该调用什么API了
+  
+  + rel: rel表示这个API与当前网址的关系（collection关系，并给出该collection的网址）
+  
+  + href: API的绝对路径
+  
+  + title: API的标题,用于概述用途
+  
+  + type: API 响应的数据类型
+  
+```
+{"link": {
+  "rel":   "collection https://www.example.com/zoos",
+  "href":  "https://api.example.com/zoos",
+  "title": "List of zoos",
+  "type":  "application/vnd.yourformat+json"
+}}
+```
+
+```a
+ maojun@maojun-mbp#curl https://api.github.com/user
+{
+  "message": "Requires authentication",
+  "documentation_url": "https://developer.github.com/v3"
+}
+```
+
+## 认证
+
+  认证和授权的用户模型该尽量采用RBAC模型，因为其良好的扩容性。 API认证的手段最好采用OAuth2.0, 简单的可以采用
+  JWT（Json Web Token）
+  
+  关于OAuth的简介可以参考[阮一峰OAuth2.0简介](http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html)
+  关于JWT参考此文[JWT使用](http://www.haomou.net/2014/08/13/2014_web_token/)
+  
+
+## 内容类型
+
+  XML已是过去时了，现代的web统一使用JSON，也就是HTTP头种的Content Type标签采用 application/json
+  
+```
+请求报文
+POST /v1/animal HTTP/1.1
+Host: api.example.org
+Accept: application/json
+Content-Type: application/json
+Content-Length: 24
+ 
+{
+  "name": "Gir",
+  "animal_type": 12
+}
+
+响应报文
+HTTP/1.1 200 OK
+Date: Wed, 18 Dec 2013 06:08:22 GMT
+Content-Type: application/json
+Access-Control-Max-Age: 1728000
+Cache-Control: no-cache
+ 
+{
+  "id": 12,
+  "created": 1386363036,
+  "modified": 1386363036,
+  "name": "Gir",
+  "animal_type": 12
+}
+
+```
+  
