@@ -2,6 +2,12 @@
 
 一个基于Openstack规范开发的API Demo
 
+### API 设计规范和文档
+
+  此项目的API设计规范请参考: [API设计规范](/doc/api_design/specification.md)
+  
+  此项目的API文档生产工具使用请参考: [API Blueprint简介](/doc/api_design/tool_usage.md)
+
 ### 项目结构
 
 ```

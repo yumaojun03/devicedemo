@@ -14,6 +14,7 @@
   在官方的工具列表里面有很多插件可以选择，具体参考[编辑器列表](https://apiblueprint.org/tools.html#editors), 这里推荐使用vscode作为编辑器，
   在vscode里面搜索API Elements  就可以找到对于的插件安装即可，关于该插件的介绍请产考[vscdoe apielements插件地址](https://github.com/XVincentX/vscode-apielements)
   
-  将你的文件保存成 apib结尾的文件，编辑器讲自动帮你完成，语法分析。该插件和apiary做了很多绑定，可以直接在线预览，具体请查看该插件的命令列表
+  将你的文件保存成 apib结尾的文件，编辑器讲自动帮你完成，语法分析。该插件和apiary做了很多绑定，可以直接在线预览，具体请查看该插件的命令列表，
+  也可以使用编辑器进行编辑完成后，在apiary上完成后面的 preview-mock-test。
 
 ## 
