@@ -21,7 +21,7 @@
 
   学习 API Blueprint Language 非常简单, 只要你有用 markdown 写过东西, 那你一定能快速的掌握它.
   
-  1. 首先, 简单过一遍官方的说明手册[指导手册](https://apiblueprint.org/documentation/)
+  1. 首先, 简单过一遍官方的[指导手册](https://apiblueprint.org/documentation/)
   
   2. 查看官方提供的例子 . 一共也就 [10](https://github.com/apiaryio/api-blueprint/tree/master/examples) 多个, 耐心看完. 心里就大概有数了.
   
@@ -32,3 +32,11 @@
 
 
 ## 例子
+
+#### 编写设计文档
+
+#### 生成HTML格式的文档
+
+#### 模拟服务端
+
+#### 客户端测试
