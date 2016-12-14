@@ -38,7 +38,7 @@ swagger-ui就够了。
     
   + 数据类型
   
-    用于描述一个数据的数据类型，常见于parameter中
+    用于描述一个数据的数据类型，对象定义时使用。
 
 |Common Name |type     |format   |Comments                                         |
 | ---------- | :-----: | :-----: | ----------------------------------------------: |
@@ -54,7 +54,7 @@ swagger-ui就够了。
 |dateTime    |string   |date-time|As defined by date-time - RFC3339                |
 |password    |string   |password |Used to hint UIs the input needs to be obscured. |
 
-  + 文档规范
+  + 规范
 
 | 字段名      | 类型	     |  描述    
 | ---------- | :-------: | ------:  
