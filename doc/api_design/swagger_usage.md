@@ -17,10 +17,14 @@ swagger-ui就够了。
   
    安装docker，配置镜像加速，然后拉去镜像到本地运行
    
-    ```
-    docker pull swaggerapi/swagger-editor
-    docker run -p 80:8080 swaggerapi/swagger-editor
-    ```
+```
+docker pull swaggerapi/swagger-editor
+docker run -p 80:8080 swaggerapi/swagger-editor
+```
+
+#### 使用本地编辑器
+  推荐使用vscode作为编辑器, 安装vscode的 Swagger View插件 就可以打造一个 swagger的编辑器了
+  采用yaml编写，然后使用Swagger Preview 查看预览。
   
 #### swagger2.0语法
     
