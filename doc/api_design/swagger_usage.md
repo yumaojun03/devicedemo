@@ -33,10 +33,12 @@ swagger-ui就够了。
     
   + 文件结构
     
-    为一个单独的文件，但是其中
+    为一个单独的文件，但是其中definitions部分可以被抽出来为一个独立文件，通过$ref进行引用，
+    按照惯例，这个文件应该被命名为 swagger.json
     
-  + 数据结构
-
+  + 数据类型
+  
+    用于描述一个数据的数据类型，常见于parameter中
 
 |Common Name |type     |format   |Comments                                         |
 | ---------- | :-----: | :-----: | ----------------------------------------------: |
@@ -51,6 +53,26 @@ swagger-ui就够了。
 |date	     |string   |date	 |As defined by full-date - RFC3339                |
 |dateTime    |string   |date-time|As defined by date-time - RFC3339                |
 |password    |string   |password |Used to hint UIs the input needs to be obscured. |
+
+  + 文档规范
+
+| 字段名      | 类型	     |  描述    
+| ---------- | :-------: | ------:  
+|swagger	 |string	 |必填项。表示使用的swagger的版本，必须为2.0
+|info	     |[Info Object](http://swagger.io/specification/#infoObject)|必填项。提供API的一些元数据描述
+|host	     |string	 |提供该API服务的主机名称或者IP，测试时 使用该地址进程测试。
+|basePath	 |string	 |API的基本路径,这是相对的host。 如果不包括,API是直属host。 必须以"/"开头
+|schemes	 |[string]   |API的传输协议的列表。 在"http","https","ws","wss"其中选择
+|consumes	 |[string]   |一个MIME类型的api可以使用列表。 值必须是所描述的Mime类型
+|produces	 |[string]   |MIME类型的api可以产生的列表。   值必须是所描述的Mime类型
+|paths  	 |[路径对象](http://swagger.io/specification/#pathsObject)	 |必填项。可用的路径和操作的API
+|definitions |[定义对象](http://swagger.io/specification/#definitionsObject)	 |一个对象数据类型定义
+|parameters	 |[参数定义对象](http://swagger.io/specification/#parametersDefinitionsObject) | 定义请求参数的对象
+|responses	 |[反应定义对象](http://swagger.io/specification/#responsesDefinitionsObject) | 定义请求响应对象
+|securityDefinitions |[安全定义对象](http://swagger.io/specification/#securityDefinitionsObject)|	安全方案定义规范,比如认证
+|security	 |[安全需求对象](http://swagger.io/specification/#securityRequirementObject) | 这里主要指使用哪种认证手段
+|tags	     |[标签对象](http://swagger.io/specification/#tagObject)    | 没个RESTful中资源的标签，列表中的每个标记名称必须是唯一的
+|externalDocs|[外部文档对象](http://swagger.io/specification/#externalDocumentationObject) |	额外的外部文档, 指向外部url
     
 
 ## 渲染器(ui)
