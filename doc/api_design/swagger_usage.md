@@ -55,6 +55,8 @@ swagger-ui就够了。
 |password    |string   |password |Used to hint UIs the input needs to be obscured. |
 
   + 规范
+  
+  规范也就是语法，会安装此规范来编写API设计文档。以下列出了所有需要的关键字段
 
 | 字段名      | 类型	     |  描述    
 | ---------- | :-------: | ------:  
