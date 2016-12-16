@@ -142,7 +142,7 @@ paths:
           description: 需要更新的基础数据：仅能更新：dataExternal
           required: true
           schema: 
-            $ref: '#/definitions/Device'
+            $ref: '#/definitions/DeviceUpdate'
       responses:
         200:
           description: 更新过的Device对象
@@ -244,15 +244,38 @@ definitions:
       active:
         type: boolean
         description: 标识设备状态，默认为false, 允许用户手动设定，方便用户启动/禁用设备，但同时如果name更新(none-->name)时，也会自动激活
+        readOnly: true
+        default: false
       dataReady:
         type: boolean
         description: 标识该设备是否允许进行数据交易, 默认为false, 允许用户手动设定，方便用户启动/停用设备的数据交易, 但同时如果dataModel更新(none-->dataMoel)时, 也会自动激活
+        readOnly: true
+        default: false
       dataModel:
         type: string
         description: 该设备在Linkmatic上面的modelId，创建时为可选项，更新时，仅允许自动为none时更新，其他情况禁止修改
       dataExternal:
         type: string
         description: 与该设备有关的一些其他数据信息，可选项，用于数据交易
+      blockChainId:
+        type: string
+        description: 设备区块链ID(32位)
+        readOnly: true
+      registeredTime:
+        type: string
+        description: 设备注册时间，设备注册时生成
+        readOnly: true
+      expiredTiem:
+        type: string
+        description: 设备过期时间，默认0，表示无过期时间
+      publiceKey:
+        type: string
+        description: 为该设备生成的公钥
+        readOnly: true
+      privateKey:
+        type: string
+        description: 为该设备生成的私钥
+        readOnly: true
   Error:
     type: object
     properties:
@@ -289,4 +312,15 @@ definitions:
         description: 标识设备状态，默认为false, 允许用户手动设定，方便用户启动/禁用设备，但同时如果name更新(none-->name)时，也会自动激活
       dataReady:
         type: boolean
-        description: 标识该设备是否允许进行数据交易, 默认为false, 允许用户手动设定，方便用户启动/停用设备的数据交易, 但同时如果dataModel更新(none-->dataMoel)时, 也会自动激活          
+        description: 标识该设备是否允许进行数据交易, 默认为false, 允许用户手动设定，方便用户启动/停用设备的数据交易, 但同时如果dataModel更新(none-->dataMoel)时, 也会自动激活
+  DeviceUpdate:
+    type: object
+    properties:
+      dataExternal:
+        type: string
+        description: 与该设备有关的一些其他数据信息，可选项，用于数据交易
+      expiredTiem:
+        type: string
+        description: 设备过期时间，默认0，表示无过期时间
+        default: "0"
+    
