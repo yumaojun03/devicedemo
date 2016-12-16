@@ -1,0 +1,292 @@
+swagger: '2.0'
+info:
+  title: Carapax Cloud API
+  description: carapax.cloud 主要提供设备注册服务，以及基于数据的区块链交易
+  termsOfService: "http://www.carapax.io/terms"
+  contact: {
+    "name": "API Support",
+    "url": "http://www.carapax.io/support",
+    "email": "support@carapax.io"
+    }
+  license: {
+    "name": "TongfangCloud",
+    "url": "http://www.carapax.io/licenses"
+    }
+  version: "1.0.0"
+host: cloud.carapax.com
+schemes:
+  - https
+  - http
+basePath: /api/v1
+produces:
+  - application/json
+consumes:
+  - application/json
+  
+paths:
+  /:
+    get:
+      tags:
+        - API ROOT
+      summary: API服务根目录
+      description: |
+        列出该API服务所能提供的服务列表。
+      responses:
+        200:
+          description: 列出所有支持的服务的入口URL
+          schema:
+            type: object
+            properties:
+              devices:
+                type: string
+                description: device服务的入口url
+        404:
+          description: API ROOT服务不存在
+  /devices/:
+    get:
+      tags:
+        - Device
+      summary: 获取设备列表
+      description: |
+        用于查询用户持有的所有设备，返回包含设备的基本信息比如名称，id以及其他一些详情信息。
+        同时提供分页，至于条件过滤，对结果按特定属性进行排序,由前端js实现。
+      parameters:
+        - name: limit
+          in: query
+          description: 限制输出多少数据，一般用于分页
+          required: false
+          type: integer
+          format: int32
+        - name: offset
+          in: query
+          description: 输出从哪个offset开始的数据，一般用于分页
+          required: false
+          type: integer
+          format: int32
+      responses:
+        200:
+          description: 一组设备的列表
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Device'
+    post:
+      tags:
+        - Device
+      summary: 设备注册
+      description: |
+        Linkmatic往Cloud注册设备，这里有一个前提条件：Linkmatic需要事先配置好一个
+        能访问Cloud Device服务的用户。然后提交数据进行注册，注册成功后会返回Device
+        对象给用户。
+      parameters:
+        - name: body
+          in: body
+          description: The Body
+          required: false
+          schema:
+            $ref: '#/definitions/Device'
+      responses:
+        200:
+          description: 返回注册的Device对象的ID
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Device'
+        default:
+          description: 操作异常
+          schema:
+            $ref: '#/definitions/Error'
+  /devices/{deviceId}:
+    get:
+      tags:
+        - Device
+      summary: 查看设备详情
+      description: |
+        查看设备的所有属性
+      parameters:
+        - name: deviceId
+          in: path
+          description: 设备的UUID
+          required: true
+          type: string
+        - name: attribute
+          in: query
+          description: 返回该设备的某一个具体属性的值
+          required: false
+          type: string
+      responses:
+        200:
+          description: An array of devices
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Device'
+        default:
+          description: 操作异常
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      tags:
+        - Device
+      summary: 更新设备的一些信息，现在而言，仅能更新：dataExternal
+      description: |
+        提供设备一些基础信息的更新
+      parameters:
+        - name: deviceId
+          in: path
+          description: 设备的UUID
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: 需要更新的基础数据：仅能更新：dataExternal
+          required: true
+          schema: 
+            $ref: '#/definitions/Device'
+      responses:
+        200:
+          description: 更新过的Device对象
+          schema:
+              $ref: '#/definitions/Device'
+        default:
+          description: 异常操作
+          schema:
+            $ref: '#/definitions/Error'
+  /devices/{deviceId}/status:
+    get:
+      tags:
+        - Device
+      summary: 设备的状态记录
+      description: |
+        提供设备状态查询，包括激活状态和数据交易状态 2 种状态
+      parameters:
+        - name: deviceId
+          in: path
+          description: 设备的UUID
+          required: true
+          type: string
+      responses:
+        200:
+          description: 返回设备当前状态
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/DeviceStatus'
+    post:
+      tags:
+        - Device
+      summary: 激活设备与激活数据交易
+      description: |
+        提供设备名称激活设备，提供数据模型用于激活数据交易
+      parameters:
+        - name: deviceId
+          in: path
+          description: 设备UUID
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: 当只有name时为激活设备，当只有DataModel时为激活数据交易，当二者都有时为都激活，激活后不能
+          required: false
+          schema: 
+            $ref: '#/definitions/DeviceDataInfo'
+      responses:
+        200:
+          description: 返回激活的设备的id
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: 设备的uuid
+        default:
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+    patch:
+      tags:
+        - Device
+      summary: 禁用/启用设备与禁用/启用数据交易
+      description: |
+        提供需要禁用的类型，有2种类型(active, dataReady)
+      parameters:
+        - name: deviceId
+          in: path
+          description: 设备UUID
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: 提供需要的数据
+          required: false
+          schema: 
+            $ref: '#/definitions/DeviceStatus'
+      responses:
+        200:
+          description: 返回设备当前的状态
+          schema:
+            $ref: '#/definitions/DeviceStatus'
+        default:
+          description: 操作异常
+          schema:
+            $ref: '#/definitions/Error'
+
+definitions:
+  Device:
+    type: object
+    properties:
+      id:
+        type: string
+        description: 全局唯一的一个设备的UUID，用于标示设备身份，如果用户传入则需要验证此id的唯一性，如果唯一可以使用。如果用户没传入则自动生成一个全局唯一的id
+      name:
+        type: string
+        description: 设备的名称，创建时为选填项，更新时，仅允许自动为none时更新，其他情况禁止修改
+      active:
+        type: boolean
+        description: 标识设备状态，默认为false, 允许用户手动设定，方便用户启动/禁用设备，但同时如果name更新(none-->name)时，也会自动激活
+      dataReady:
+        type: boolean
+        description: 标识该设备是否允许进行数据交易, 默认为false, 允许用户手动设定，方便用户启动/停用设备的数据交易, 但同时如果dataModel更新(none-->dataMoel)时, 也会自动激活
+      dataModel:
+        type: string
+        description: 该设备在Linkmatic上面的modelId，创建时为可选项，更新时，仅允许自动为none时更新，其他情况禁止修改
+      dataExternal:
+        type: string
+        description: 与该设备有关的一些其他数据信息，可选项，用于数据交易
+  Error:
+    type: object
+    properties:
+      code:
+        description: 错误码
+        type: integer
+        format: int32
+      message:
+        description: 错误信息
+        type: string
+      fields:
+        description: 如果为用户的参数错误，改字段用于描述是哪个字段引起的错误
+        type: string
+  DeviceDataInfo:
+    type: object
+    properties:
+      name:
+        type: string
+        description: 设备的名称，创建时为选填项，更新时，仅允许自动为none时更新，其他情况禁止修改
+      dataMoel:
+        type: string
+        description: 该设备在Linkmatic上面的modelId，创建时为可选项，更新时，仅允许自动为none时更新，其他情况禁止修改
+      dataAttribute1:
+        type: string
+        description: 与数据交易有关的属性1
+      dataAttribute2:
+        type: string
+        description: 与数据交易有关的属性2
+  DeviceStatus:
+    type: object
+    properties:
+      active:
+        type: boolean
+        description: 标识设备状态，默认为false, 允许用户手动设定，方便用户启动/禁用设备，但同时如果name更新(none-->name)时，也会自动激活
+      dataReady:
+        type: boolean
+        description: 标识该设备是否允许进行数据交易, 默认为false, 允许用户手动设定，方便用户启动/停用设备的数据交易, 但同时如果dataModel更新(none-->dataMoel)时, 也会自动激活          
