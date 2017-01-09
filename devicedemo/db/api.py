@@ -1,3 +1,4 @@
+# ~*~ coding: utf-8 ~*~
 import traceback
 
 from sqlalchemy import orm

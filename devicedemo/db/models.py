@@ -1,3 +1,4 @@
+# ~*~ coding: utf-8 ~*~
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext import declarative
 from sqlalchemy import Index
