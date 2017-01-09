@@ -10,7 +10,7 @@ from paste import deploy
 from devicedemo.api import hooks
 from devicedemo.api import config as api_config
 from devicedemo.api import middleware
-from devicedemo.common import config as common_config
+from devicedemo.common import defaults as common_config
 import devicedemo.conf
 from devicedemo.common.i18n import _LI
 
