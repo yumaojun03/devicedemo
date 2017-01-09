@@ -1,3 +1,4 @@
+# ~*~ coding: utf-8 ~*~
 from pecan import hooks
 from devicedemo.db import api as db_api
 

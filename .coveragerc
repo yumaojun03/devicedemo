@@ -1,0 +1,9 @@
+[run]
+branch = True
+source = devicedemo
+omit = devicedemo/tests/*
+
+[report]
+ignore_errors = True
+exclude_lines =
+    pass
