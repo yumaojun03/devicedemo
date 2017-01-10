@@ -1,109 +1,110 @@
-# ~*~ coding: utf-8 ~*~
-import traceback
+# zhangguoqing
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
 
-from sqlalchemy import orm
-from sqlalchemy.orm import exc as db_exc
-from sqlalchemy import create_engine
-from devicedemo.db import models as db_models
+import abc
 
+from oslo_config import cfg
+from oslo_db import api as db_api
+import six
 
-_ENGINE = None
-_SESSION_MAKER = None
-
-
-def get_engine():
-    global _ENGINE
-    if _ENGINE is not None:
-        return _ENGINE
-
-    # TODO: db的配置应该从配置文件中读取，这里仅为demo
-    _ENGINE = create_engine('sqlite:///devicedemo.db')
-    db_models.Base.metadata.create_all(_ENGINE)
-
-    return _ENGINE
-
-
-def get_session_maker(engine):
-    global _SESSION_MAKER
-    if _SESSION_MAKER is not None:
-        return _SESSION_MAKER
-    _SESSION_MAKER = orm.sessionmaker(bind=engine)
-
-    return _SESSION_MAKER
+_BACKEND_MAPPING = {'sqlalchemy': 'devicedemo.db.sqlalchemy.api'}
+IMPL = db_api.DBAPI.from_config(cfg.CONF,
+                                backend_mapping=_BACKEND_MAPPING,
+                                lazy=True)
 
 
-def get_session():
-    engine = get_engine()
-    maker = get_session_maker(engine)
-    session = maker()
-
-    return session
+def get_instance():
+    """Return a DB API instance."""
+    return IMPL
 
 
-class Connection(object):
+class BaseError(Exception):
+    """Base class errors."""
 
-    def __init__(self):
-        pass
 
-    def get_device(self, device_uuid):
-        query = get_session().query(db_models.Device).filter_by(uuid=device_uuid)
-        try:
-            device = query.one()
-        except db_exc.NoResultFound as e:
-            # No QA
-            device = None
-            traceback.print_exc()
-            print(e)
+class ClientError(BaseError):
+    """Base class for client side errors."""
 
-        return device
 
+class NoSuchDevice(ClientError):
+    """Raised when the device doesn't exist."""
+
+    def __init__(self, device_id=None, name=None):
+        super(NoSuchDevice, self).__init__(
+            "No such device: %s (UUID: %s)" % (name, device_id))
+        self.devicd_id = device_id
+        self.name = name
+
+
+class DeviceAlreadyExists(ClientError):
+    """Raised when the device already exists."""
+
+    def __init__(self, device_id, name):
+        super(DeviceAlreadyExists, self).__init__(
+            "Device %s already exists (UUID: %s)" % (name, device_id))
+        self.device_id = device_id
+        self.name = name
+
+
+@six.add_metaclass(abc.ABCMeta)
+class Device(object):
+    """Base class for state tracking."""
+
+    @abc.abstractmethod
+    def get_migration(self):
+        """Return a migrate manager.
+
+        """
+
+    @abc.abstractmethod
+    def get_device(self, device_id=None, name=None):
+        """Retrieve the device object.
+
+        :param device_id: uuid of the device
+        :param name: name of the device
+        """
+
+    @abc.abstractmethod
     def list_devices(self):
-        session = get_session()
-        query = session.query(db_models.Device)
-        users = query.all()
-        return users
+        """Return an list of every devices.
 
-    def create_device(self, device):
-        session = get_session()
-        device_obj = db_models.Device(**device.to_dict())
-        try:
-            session.add(device_obj)
-            session.commit()
-        except Exception as e:
-            # noqa
-            traceback.print_exc()
-            print(e)
+        """
 
-    def update_device(self, device):
-        session = get_session()
-        query = session.query(db_models.Device).filter_by(uuid=device.uuid)
-        try:
-            d = query.one()
-            d.name = device.name
-            d.type = device.type
-            d.vendor = device.vendor
-            d.version = device.version
-            session.commit()
-        except db_exc.NoResultFound as e:
-            # No QA
-            traceback.print_exc()
-            print(e)
-            d = None
-        return d
+    @abc.abstractmethod
+    def create_device(self, name, dtype=None, vendor=None, version=None):
+        """Create a new device.
 
-    def delete_device(self, uuid):
-        session = get_session()
-        query = session.query(db_models.Device).filter_by(uuid=uuid)
-        ret = {"data": None, "error": None}
-        try:
-            device = query.one()
-            session.delete(device)
-            session.commit()
-            ret['data'] = "delete device %s success" % uuid
-        except db_exc.NoResultFound as e:
-            # No QA
-            traceback.print_exc()
-            print(e)
-            ret['error'] = e
-        return ret
+        :param name: Name of the device to create.
+        :param dtype: Type of the device to create.
+        :param vendor: Vendor of the device to create.
+        :param version: Version of the device to create.
+        """
 
+    @abc.abstractmethod
+    def update_device(self, device_id, name, dtype=None, vendor=None,
+                      version=None):
+        """Update a device.
+
+        :param device_id: uuid UUID of the device to modify.
+        :param name: Name of the device to create.
+        :param dtype: Type of the device to create.
+        :param vendor: Vendor of the device to create.
+        :param version: Version of the device to create.
+        """
+
+    @abc.abstractmethod
+    def delete_device(self, device_id):
+        """Update a device.
+
+        :param device_id: uuid UUID of the device to delete.
+        """

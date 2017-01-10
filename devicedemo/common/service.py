@@ -14,7 +14,7 @@
 
 from oslo_log import log as logging
 
-from devicedemo.common import config
+from devicedemo.common import defaults as config
 import devicedemo.conf
 
 CONF = devicedemo.conf.CONF
