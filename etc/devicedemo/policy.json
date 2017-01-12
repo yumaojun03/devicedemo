@@ -1,0 +1,10 @@
+{
+    "context_is_admin":  "role:admin",
+    "default": "", 
+
+    "device:list_devices": "",
+    "device:get_device": "",
+    "device:delete_device": "",
+    "device:update_device": "", 
+
+}
