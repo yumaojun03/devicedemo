@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014 Objectif Libre
+# Copyright 2016 Objectif Libre
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -15,11 +15,17 @@
 #
 # @author: Stéphane Albert
 #
-from devicedemo.common.db.alembic import env  # noqa
-from devicedemo.db.sqlalchemy import models
+from sqlalchemy.ext import declarative
 
-target_metadata = models.Base.metadata
-version_table = 'devicedemo_alembic'
+NAMING_CONVENTION = {
+    "ix": 'ix_%(column_0_label)s',
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(constraint_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"}
 
 
-env.run_migrations_online(target_metadata, version_table)
+def get_base():
+    base = declarative.declarative_base()
+    base.metadata.naming_convention = NAMING_CONVENTION
+    return base

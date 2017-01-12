@@ -15,11 +15,14 @@
 #
 # @author: Stéphane Albert
 #
-from devicedemo.common.db.alembic import env  # noqa
-from devicedemo.db.sqlalchemy import models
+from pecan import rest
 
-target_metadata = models.Base.metadata
-version_table = 'devicedemo_alembic'
+from devicedemo.api.v1.controllers import device as device_api
 
 
-env.run_migrations_online(target_metadata, version_table)
+class V1Controller(rest.RestController):
+    """API version 1 controller.
+
+    """
+
+    device = device_api.DeviceController()

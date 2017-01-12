@@ -15,11 +15,13 @@
 #
 # @author: Stéphane Albert
 #
-from devicedemo.common.db.alembic import env  # noqa
-from devicedemo.db.sqlalchemy import models
+import oslo_i18n as i18n  # noqa
 
-target_metadata = models.Base.metadata
-version_table = 'devicedemo_alembic'
+_translators = i18n.TranslatorFactory(domain='devicedemo')
+i18n.enable_lazy()
 
-
-env.run_migrations_online(target_metadata, version_table)
+_ = _translators.primary
+_LI = _translators.log_info
+_LW = _translators.log_warning
+_LE = _translators.log_error
+_LC = _translators.log_critical
