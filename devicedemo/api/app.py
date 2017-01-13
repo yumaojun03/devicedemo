@@ -48,7 +48,7 @@ api_opts = [
               default="0.0.0.0",
               help='Host serving the API.'),
     cfg.PortOpt('port',
-                default=9000,
+                default=9009,
                 help='Host port serving the API.'),
     cfg.BoolOpt('pecan_debug',
                 default=False,

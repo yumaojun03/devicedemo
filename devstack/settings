@@ -1,0 +1,33 @@
+# turn on the Devicedemo services by default
+enable_service devicedemo-api
+
+# Defaults
+# Set up default directories
+# --------------------------
+
+DEVICEDEMO_DIR=$DEST/devicedemo
+DEVICEDEMO_CONF_DIR=/etc/devicedemo
+DEVICEDEMO_CONF=$DEVICEDEMO_CONF_DIR/devicedemo.conf
+DEVICEDEMO_API_LOG_DIR=/var/log/devicedemo
+DEVICEDEMO_AUTH_CACHE_DIR=${DEVICEDEMO_AUTH_CACHE_DIR:-/var/cache/devicedemo}
+DEVICEDEMO_DATA_DIR=${DEVICEDEMO_DATA_DIR:-/var/lib/devicedemo}
+
+# Set up database backend
+DEVICEDEMO_BACKEND=${DEVICEDEMO_BACKEND:-sqlite}
+
+# Set devicedemo repository
+DEVICEDEMO_REPO=${DEVICEDEMO_REPO:-$https://github.com/yumaojun03/devicedemo.git}
+DEVICEDEMO_BRANCH=${DEVICEDEMO_BRANCH:-master}
+
+# Set Devicedemo connection info
+DEVICEDEMO_SERVICE_HOST=${DEVICEDEMO_SERVICE_HOST:-$SERVICE_HOST}
+DEVICEDEMO_SERVICE_PORT=${DEVICEDEMO_SERVICE_PORT:-9009}
+DEVICEDEMO_SERVICE_PROTOCOL=${DEVICEDEMO_SERVICE_PROTOCOL:-$SERVICE_PROTOCOL}
+
+# Set Devicedemo client info
+GITREPO["python-devicedemoclient"]=${DEVICEDEMOCLIENT_REPO:-https://github.com/yumaojun03/python-devicedemo.git}
+GITDIR["python-devicedemoclient"]=$DEST/python-devicedemoclient
+GITBRANCH["python-devicedemoclient"]=${DEVICEDEMOCLIENT_BRANCH:-master}
+
+# Tell Tempest this project is present
+TEMPEST_SERVICES+=,devicedemo
